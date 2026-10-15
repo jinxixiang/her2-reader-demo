@@ -16,9 +16,7 @@
       "reader package.</p>";
     return;
   }
-  if (S.preview || S.demo) $("preview-banner").classList.remove("hidden");
-  if (S.demo) $("preview-banner").textContent = "DEMO: the real IHC is shown in both arms. For testing " +
-    "the study workflow only; these scores are not part of the study.";
+  if (S.preview) $("preview-banner").classList.remove("hidden");
 
   // ---------- in-page dialogs (the artifact frame disables alert/confirm) ----------
   function ask(msg, okLabel, cancelLabel) {
