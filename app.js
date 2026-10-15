@@ -388,6 +388,7 @@
     var v = OpenSeadragon({
       element: $(id), prefixUrl: "lib/openseadragon/images/", showNavigator: true,
       navigatorPosition: "BOTTOM_RIGHT", navigatorSizeRatio: 0.18, showRotationControl: false,
+      navigationControlAnchor: OpenSeadragon.ControlAnchor.BOTTOM_LEFT,   // keeps the panel label clear
       showFullPageControl: false, maxZoomPixelRatio: 2, minZoomImageRatio: 0.8, visibilityRatio: 0.3,
       animationTime: 0.5, zoomPerScroll: 1.4, crossOriginPolicy: false, preserveImageSizeOnResize: true,
       gestureSettingsMouse: { clickToZoom: false, dblClickToZoom: true },
