@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HER2 Reader Study</title>
+<link rel="stylesheet" href="style.css">
+<script src="lib/openseadragon/openseadragon.min.js"></script>
+<script src="study.js"></script>
+<script src="config.js"></script>
+</head>
+<body>
+
+<div id="preview-banner" class="banner hidden">PREVIEW BUILD: some images are incomplete. Do not use for scoring.</div>
+
+<!-- start screen -->
+<section id="start" class="screen">
+  <div class="start-wrap">
+    <h1>HER2 IHC reader study</h1>
+    <p class="muted">Score each case's HER2 immunohistochemistry as you would in routine practice
+      (ASCO/CAP 2018, affirmed 2023). Each case consists of one or more regions (ROIs) from the same
+      tumour. Review all ROIs, then give one score for the case.</p>
+
+    <div class="card">
+      <div class="row">
+        <label>Reader <select id="sel-reader"></select></label>
+        <label>Session <select id="sel-session"><option value="1">1</option><option value="2">2</option></select></label>
+        <button id="btn-start" class="primary">Start / resume</button>
+      </div>
+      <div id="start-warning" class="warning hidden"></div>
+      <table id="progress-table" class="progress-table"></table>
+      <div class="row small">
+        <button id="btn-export-start">Export scores (CSV)</button>
+        <label class="file-btn">Import scores (CSV)<input id="inp-import" type="file" accept=".csv,text/csv"></label>
+        <span id="import-msg" class="muted"></span>
+      </div>
+      <p class="muted small">Scores are saved automatically in this browser on this computer. Please use the
+        same computer and browser for a whole session, and export the CSV when you finish each session
+        (it is also offered automatically at the end). Send the CSV files to the study coordinator.</p>
+      <p id="remote-state" class="muted small"></p>
+    </div>
+
+    <div id="coord" class="card hidden">
+      <h2>Coordinator: scores on the study server</h2>
+      <p class="muted small">Only you, the owner, can see this panel. Each reader writes only their own record.</p>
+      <div class="table-wrap"><table id="coord-table" class="progress-table"></table></div>
+      <div class="row small">
+        <button id="btn-coord-refresh">Refresh</button>
+        <button id="btn-coord-csv" class="primary">Download all scores (CSV)</button>
+      </div>
+    </div>
+
+    <div class="card guide">
+      <h2>Scoring guide</h2>
+      <p>Assess invasive carcinoma only (not in-situ carcinoma or normal ducts). Use the H&amp;E on the left
+        to locate invasive tumour. Score membrane staining in the HER2 IHC on the right, across all ROIs of
+        the case together, by the percentage of invasive tumour cells.</p>
+      <table>
+        <tr><th>0</th><td>No staining, or incomplete, faint/barely perceptible membrane staining in &le;10% of
+          invasive tumour cells.</td></tr>
+        <tr><th>1+</th><td>Incomplete, faint/barely perceptible membrane staining in &gt;10% of tumour cells.</td></tr>
+        <tr><th>2+</th><td>Weak to moderate complete membrane staining in &gt;10% of tumour cells (equivocal).</td></tr>
+        <tr><th>3+</th><td>Circumferential, complete, intense membrane staining in &gt;10% of tumour cells.</td></tr>
+      </table>
+      <p>Images are shown at native resolution (about 20&times;). You can zoom to about 40&times;
+        digitally. Some IHC images in this study are real and some are computer-generated from the H&amp;E.
+        For each case, choose one score. Choose <b>Cannot be scored</b> only if the images do not allow a
+        HER2 score.</p>
+      <p class="muted small">Controls: drag to pan, scroll to zoom, double-click to zoom in, Home button to fit.
+        Pan/zoom of the two panels is linked (untick "Link panels" to move them separately).</p>
+    </div>
+  </div>
+</section>
+
+<!-- reading screen -->
+<section id="read" class="screen hidden">
+  <header class="topbar">
+    <span id="hdr-title" class="title"></span>
+    <div class="progress"><div id="hdr-bar"></div></div>
+    <button id="btn-prev">&larr; Previous</button>
+    <select id="sel-case" title="Jump to case"></select>
+    <button id="btn-next">Next &rarr;</button>
+    <span class="spacer"></span>
+    <button id="btn-export">Export CSV</button>
+    <button id="btn-exit">Exit</button>
+  </header>
+
+  <main class="layout">
+    <div class="panes">
+      <div class="pane"><div class="pane-label">H&amp;E</div><div id="osd-he" class="osd"></div></div>
+      <div class="pane"><div class="pane-label">HER2 IHC <span id="mag" class="mag"></span></div><div id="osd-ihc" class="osd"></div></div>
+    </div>
+    <div class="roibar">
+      <label class="small"><input id="chk-sync" type="checkbox" checked> Link panels</label>
+      <span id="roi-label" class="roi-label"></span>
+      <div id="roi-strip" class="roi-strip"></div>
+    </div>
+
+    <form id="form" class="form" autocomplete="off">
+      <h2>Case score</h2>
+      <fieldset id="fs-score">
+        <legend>HER2 IHC score for this case</legend>
+        <div class="seg">
+          <label><input type="radio" name="score" value="0"><span>0</span></label>
+          <label><input type="radio" name="score" value="1+"><span>1+</span></label>
+          <label><input type="radio" name="score" value="2+"><span>2+</span></label>
+          <label><input type="radio" name="score" value="3+"><span>3+</span></label>
+        </div>
+        <label class="opt small"><input type="radio" name="score" value="na"> Cannot be scored</label>
+      </fieldset>
+      <fieldset>
+        <legend>Comment <span class="muted">(optional)</span></legend>
+        <textarea name="comment" rows="2"></textarea>
+      </fieldset>
+      <div id="form-msg" class="warning hidden"></div>
+      <button id="btn-save" type="submit" class="primary wide">Save &amp; next</button>
+      <div id="save-state" class="muted small"></div>
+    </form>
+  </main>
+</section>
+
+<div id="dlg" class="dlg hidden" role="dialog" aria-modal="true" aria-labelledby="dlg-msg">
+  <div class="dlg-box">
+    <p id="dlg-msg"></p>
+    <div class="row dlg-actions"><button id="dlg-cancel">Cancel</button><button id="dlg-ok" class="primary">OK</button></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
